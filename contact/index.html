@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Contact · MLK Auto, Villecresnes</title>
+  <meta name="description" content="Contacter MLK Auto à Villecresnes : adresse, téléphone, horaires et formulaire de demande de devis.">
+  <meta name="theme-color" content="#0b0d10">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MLK Auto">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:title" content="Contact · MLK Auto, Villecresnes">
+  <meta property="og:description" content="Contacter MLK Auto à Villecresnes : adresse, téléphone, horaires et formulaire de demande de devis.">
+  <link rel="icon" href="/assets/logo/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/assets/logo/favicon-16.png" type="image/png" sizes="16x16">
+  <link rel="apple-touch-icon" href="/assets/logo/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Hanken+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu</a>
+<header class="site-header">
+  <div class="site-header__bar">
+    <a class="brand" href="/" aria-label="MLK Auto, accueil"><img src="/assets/logo/mlk-auto-logo-bone.png" width="117" height="40" alt="MLK Auto"></a>
+    <nav id="site-nav" class="nav" aria-label="Navigation principale">
+      <ul class="nav__list" role="list">
+        <li><a class="nav__link" href="/film-solaire/">Film solaire</a></li>
+        <li><a class="nav__link" href="/total-covering/">Total covering</a></li>
+        <li><a class="nav__link" href="/film-de-protection/">Film de protection</a></li>
+        <li><a class="nav__link" href="/protection-pare-brise/">Pare-brise</a></li>
+        <li><a class="nav__link" href="/contact/" aria-current="page">Contact</a></li>
+      </ul>
+      <a class="btn btn--sm nav__cta" href="/prendre-rdv/">Prendre RDV</a>
+    </nav>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Ouvrir le menu"><span class="nav__toggle-bars" aria-hidden="true"></span></button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section page-top" aria-labelledby="contact-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Contact</p>
+        <h1 id="contact-title">Parlons de votre projet.</h1>
+        <p class="lead">Joignables 6j/7 : appelez l'atelier ou envoyez-nous votre demande.</p>
+      </div>
+      <div class="form-wrap">
+        <div>
+          <!-- ENVOI NON BRANCHE : remplacer action par l'endpoint reel (ex. Web3Forms https://api.web3forms.com/submit + cle fournie par Reda), puis brancher le fetch dans assets/js/contact.js -->
+          <form class="form" id="contact-form" method="post" action="#A-BRANCHER-endpoint-formulaire" novalidate aria-labelledby="form-title">
+            <h2 id="form-title" style="font-size:var(--fs-xl)">Demande de devis</h2>
+            <div class="form__summary" id="form-summary" role="alert" tabindex="-1" hidden></div>
+            <div class="field">
+              <label for="f-name">Prénom et nom <span class="req" aria-hidden="true">*</span></label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="f-name-err">
+              <p class="field__error" id="f-name-err" hidden></p>
+            </div>
+            <div class="form__row form__row--2">
+              <div class="field">
+                <label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="f-email-err">
+                <p class="field__error" id="f-email-err" hidden></p>
+              </div>
+              <div class="field">
+                <label for="f-tel">Téléphone <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="f-tel-hint f-tel-err">
+                <p class="field__hint" id="f-tel-hint">Ex. 06 12 34 56 78</p>
+                <p class="field__error" id="f-tel-err" hidden></p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-need">Votre besoin <span class="req" aria-hidden="true">*</span></label>
+              <select id="f-need" name="need" required aria-describedby="f-need-err">
+                <option value="">Choisir…</option>
+                <option>Film solaire</option>
+                <option>Total covering</option>
+                <option>Film de protection</option>
+                <option>Pare-brise</option>
+              </select>
+              <p class="field__error" id="f-need-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="f-msg">Votre projet <span class="req" aria-hidden="true">*</span></label>
+              <textarea id="f-msg" name="message" rows="5" autocomplete="off" required aria-describedby="f-msg-hint f-msg-err"></textarea>
+              <p class="field__hint" id="f-msg-hint">Marque et modèle du véhicule, finition ou teinte souhaitée.</p>
+              <p class="field__error" id="f-msg-err" hidden></p>
+            </div>
+            <p class="form__note"><span aria-hidden="true" style="color:var(--accent-text)">*</span> Champs obligatoires. Les informations saisies servent uniquement à répondre à votre demande.</p>
+            <div><button class="btn" type="submit">Envoyer ma demande</button></div>
+          </form>
+          <div class="form__success" id="form-success" role="status" tabindex="-1" hidden>
+            <h2 style="font-size:var(--fs-xl)">Merci, votre demande est prête.</h2>
+            <p class="muted">L'envoi en ligne n'est pas encore activé sur ce site (version de démonstration) : rien n'a été transmis. Pour être sûr d'être lu, appelez-nous au <a href="tel:+33652441795">06 52 44 17 95</a> ou écrivez à <a href="mailto:mlkauto@yahoo.com">mlkauto@yahoo.com</a>.</p>
+          </div>
+        </div>
+        <div class="side-stack">
+          <div class="info-card">
+            <h2 style="font-size:var(--fs-lg)">Téléphone et e-mail</h2>
+            <p><a class="cta__tel" href="tel:+33652441795">06 52 44 17 95</a></p>
+            <p><a href="mailto:mlkauto@yahoo.com">mlkauto@yahoo.com</a></p>
+            <p class="muted">Joignable 6j/7.</p>
+          </div>
+          <div class="info-card">
+            <h2 style="font-size:var(--fs-lg)">L'atelier</h2>
+            <address>28 chemin des Closeaux<br>94440 Villecresnes</address>
+            <a class="link-arrow" href="https://www.google.com/maps/search/?api=1&amp;query=28+chemin+des+Closeaux+94440+Villecresnes" target="_blank" rel="noopener">Voir sur Google Maps<span class="sr-only"> (nouvel onglet)</span></a>
+          </div>
+          <div class="info-card">
+            <h2 style="font-size:var(--fs-lg)">Horaires</h2>
+            <dl class="spec"><dt>Lundi – samedi</dt><dd>10:00 – 18:00</dd><dt>Dimanche</dt><dd>Fermé</dd></dl>
+          </div>
+          <a class="btn btn--ghost" href="/prendre-rdv/">Prendre rendez-vous en ligne</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <img src="/assets/logo/mlk-auto-logo-bone.png" width="117" height="40" alt="MLK Auto" loading="lazy">
+        <p>Préparateur esthétique à Villecresnes depuis 2011 : film solaire, covering, film de protection.</p>
+      </div>
+      <nav aria-label="Services">
+        <hr class="film-rule"><span class="site-footer__title">Services</span>
+        <ul role="list">
+          <li><a href="/film-solaire/">Film solaire</a></li>
+          <li><a href="/total-covering/">Total covering</a></li>
+          <li><a href="/film-de-protection/">Film de protection (PPF)</a></li>
+          <li><a href="/protection-pare-brise/">Protection pare-brise</a></li>
+          <li><a href="/prendre-rdv/">Prendre rendez-vous</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </nav>
+      <div>
+        <hr class="film-rule"><span class="site-footer__title">L'atelier</span>
+        <address>
+          28 chemin des Closeaux<br>94440 Villecresnes<br>
+          <a href="tel:+33652441795">06 52 44 17 95</a><br>
+          <a href="mailto:mlkauto@yahoo.com">mlkauto@yahoo.com</a>
+        </address>
+        <p class="muted" style="margin-top:var(--s-3)">Lundi – samedi : 10:00 – 18:00<br>Dimanche : fermé</p>
+      </div>
+      <div>
+        <hr class="film-rule"><span class="site-footer__title">Réseaux</span>
+        <ul role="list">
+          <li><a href="https://www.instagram.com/mlkauto94/" rel="noopener" target="_blank">Instagram @mlkauto94</a></li>
+          <li><a href="https://www.tiktok.com/@mlkauto94" rel="noopener" target="_blank">TikTok @mlkauto94</a></li>
+          <li><a href="https://www.facebook.com/mlkautoVitreTeintee" rel="noopener" target="_blank">Facebook MLK Auto</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__legal">
+      <p>© 2026 MLK Auto · <a href="/mentions-legales/">Mentions légales</a></p>
+      <p>Logos, marques déposées et noms de marques propriété de leurs détenteurs.</p>
+    </div>
+  </div>
+</footer>
+<a class="fab-call" href="tel:+33652441795" aria-label="Appeler MLK Auto">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg>
+</a>
+
+<script src="/assets/js/app.js" defer></script>
+<script src="/assets/js/mobile.js" defer></script>
+<script src="/assets/js/contact.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+node_modules/
+.vercel/
+assets/img/_originals/
+_review/
+BRIEF.md
+DA.md
+MANIFEST.md
+assets/img/MANIFEST.md
+# anciens JPG/JPEG non references (voir README)
+assets/img/insta/*.jpg
+assets/img/site/*.jpg
+assets/img/site/*.jpeg
+assets/img/site/2022_05_cropped-LOGO-mlk_Plan-de-travail-1-copie.png
+assets/img/site/2024_08_film-solaire.webp
+assets/logo/_alt/
+_outreach/

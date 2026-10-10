@@ -1,0 +1,648 @@
+/* MLK Auto - composants du site. Importer APRES tokens.css et base.css.
+   Ordre dans <head> : tokens.css, base.css, site.css.
+   Chaque bloc est documente par un commentaire en tete. Mobile-first. */
+
+/* =========================================================
+   1. HEADER  (.site-header)
+   Markup : _partials/header.html. Transparent en haut de page ; le JS pose
+   .is-scrolled (> 40px) : la barre devient une pastille flottante (pill,
+   --overlay + blur). Mobile (< 64em) : .nav devient un panneau plein ecran,
+   ouvert par .nav__toggle (aria-expanded) ; <html> recoit .menu-open.
+   Lien actif : aria-current="page" sur le <a>.
+   ========================================================= */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-header); pointer-events: none; }
+.site-header__bar {
+  pointer-events: auto;
+  width: min(100% - 2 * var(--gutter), var(--container));
+  height: var(--header-h); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  border: 1px solid transparent; border-radius: var(--r-pill);
+  transition: margin-top var(--dur-2) var(--ease-out), height var(--dur-2) var(--ease-out),
+    padding var(--dur-2) var(--ease-out), background var(--dur-2), border-color var(--dur-2), box-shadow var(--dur-2);
+}
+.site-header.is-scrolled .site-header__bar {
+  margin-top: 12px; height: 56px; padding-inline: var(--s-4) var(--s-2);
+  background: var(--overlay); border-color: var(--line-soft); box-shadow: var(--sh-1);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.brand { display: inline-flex; align-items: center; flex: none; }
+.brand img { width: auto; height: 2.5rem; }
+[data-theme="light"] .brand img, [data-theme="light"] .site-footer__brand img { content: url("/assets/logo/mlk-auto-logo-black.png"); }
+.nav__toggle {
+  display: inline-grid; place-items: center; width: 2.75rem; height: 2.75rem; flex: none;
+  background: transparent; border: 1px solid var(--line-soft); border-radius: var(--r-pill); cursor: pointer;
+}
+.nav__toggle-bars, .nav__toggle-bars::before, .nav__toggle-bars::after {
+  display: block; width: 1.125rem; height: 2px; background: var(--text); border-radius: 2px;
+  transition: transform var(--dur-2) var(--ease-out), background var(--dur-2);
+}
+.nav__toggle-bars { position: relative; }
+.nav__toggle-bars::before, .nav__toggle-bars::after { content: ""; position: absolute; left: 0; }
+.nav__toggle-bars::before { top: -6px; }
+.nav__toggle-bars::after { top: 6px; }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars { background: transparent; }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars::before { transform: translateY(6px) rotate(45deg); }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars::after { transform: translateY(-6px) rotate(-45deg); }
+.nav__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-2); }
+.nav__link {
+  display: block; padding: var(--s-2) var(--s-3); text-decoration: none; border-radius: var(--r-pill);
+  font-family: var(--font-display); font-stretch: 108%; font-weight: 600;
+  letter-spacing: 0.02em; transition: background var(--dur-1), color var(--dur-1);
+}
+.nav__link:hover { background: var(--line-soft); }
+.nav__link[aria-current="page"] { color: var(--accent-text); }
+
+/* Mobile : panneau plein ecran (le JS ajoute .js ; sans JS la nav reste dans le flux) */
+@media (max-width: 63.999em) {
+  .js .nav {
+    position: fixed; inset: 0; z-index: -1; pointer-events: auto;
+    display: flex; flex-direction: column; justify-content: center; gap: var(--s-6);
+    padding: calc(var(--header-h) + var(--s-5)) var(--gutter) var(--s-7);
+    background: var(--bg); background-image: radial-gradient(60rem 30rem at 100% 0, var(--mlk-red-wash), transparent);
+    opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out), visibility 0s linear var(--dur-2);
+  }
+  .js.menu-open .nav { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .js .nav__link { font-size: var(--fs-2xl); padding-inline: 0; }
+  .js .nav__cta { align-self: flex-start; }
+  .menu-open { overflow: hidden; }
+  .menu-open .site-header__bar { position: relative; z-index: 1; }
+  .site-header.is-scrolled.is-open .site-header__bar { background: transparent; border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .no-js .site-header__bar, :root:not(.js) .site-header__bar { flex-wrap: wrap; height: auto; padding-block: var(--s-3); }
+  :root:not(.js) .nav__toggle { display: none; }
+}
+@media (min-width: 64em) {
+  .nav__toggle { display: none; }
+  .nav { display: flex; align-items: center; gap: var(--s-4); }
+  .nav__list { flex-direction: row; gap: var(--s-1); }
+  .nav__link { font-size: var(--fs-sm); }
+}
+
+/* =========================================================
+   2. HERO  (.hero)
+   Photo plein cadre dans <picture class="hero__media"> (paysage desktop,
+   portrait mobile), voile OBLIGATOIRE : .photo-veil (base.css) + .hero::after
+   (voile gauche desktop). Contenu dans .hero__inner (eyebrow, h1, .lead,
+   .cluster de boutons). .hero--page = variante courte pour pages internes.
+   ========================================================= */
+.hero { position: relative; isolation: isolate; display: flex; align-items: flex-end; min-height: max(36rem, 100svh); overflow: hidden; background: var(--ink); }
+.hero--page { min-height: clamp(26rem, 55svh, 38rem); }
+.hero__media, .hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__media img { object-fit: cover; object-position: var(--focus-pos, 50% 50%); }
+.hero.photo-veil::before { z-index: 0; }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(90deg, rgb(11 13 16 / .9), rgb(11 13 16 / .68) 42%, rgb(11 13 16 / .2) 72%, transparent); }
+.hero__inner { position: relative; z-index: 1; padding-block: calc(var(--header-h) + var(--s-8)) var(--s-8); display: grid; gap: var(--s-5); }
+.hero__inner > * { max-width: 40rem; }
+.hero h1 { font-size: clamp(2.5rem, 1.5rem + 5vw, 5.75rem); }
+.hero .lead { color: var(--bone); opacity: .92; }
+.hero__sweep { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.hero__sweep::after { content: ""; position: absolute; inset: 0; background: var(--gloss); transform: translateX(-120%); }
+.is-ready .hero__sweep::after { animation: sweep var(--dur-sweep) var(--ease-film) 400ms 1 forwards; }
+.hero__scroll { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--text-muted); }
+
+/* =========================================================
+   3. EN-TETES DE SECTION  (.section-head)
+   eyebrow + h2 + .lead, optionnellement un lien a droite (.section-head__link).
+   ========================================================= */
+.section-head { display: grid; gap: var(--s-3); margin-bottom: var(--s-7); }
+.section-head .lead { max-width: 52ch; }
+.section-head__link { justify-self: start; }
+@media (min-width: 48em) {
+  .section-head--split { grid-template-columns: 1fr auto; align-items: end; column-gap: var(--s-6); }
+  .section-head--split > :not(.section-head__link) { grid-column: 1; }
+  .section-head--split .section-head__link { grid-column: 2; grid-row: 1 / span 3; justify-self: end; }
+}
+.link-arrow { display: inline-flex; align-items: center; gap: var(--s-2); font-family: var(--font-display); font-stretch: 108%; font-weight: 650; font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; color: var(--bone); }
+.link-arrow::after { content: "\2192"; color: var(--accent-text); transition: transform var(--dur-2) var(--ease-out); }
+.link-arrow:hover::after { transform: translateX(4px); }
+
+/* =========================================================
+   4. CARTES SERVICES  (.service-card dans .auto-grid)
+   <a class="service-card"> = carte entiere cliquable (un seul lien) :
+   <span class="service-card__media film-edge"><img></span>, h3, p, .service-card__more.
+   Hover : lift 3px, bordure rouge, reflet.
+   ========================================================= */
+.service-card {
+  position: relative; display: flex; flex-direction: column; text-decoration: none; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); box-shadow: var(--sh-1);
+  transition: transform var(--dur-2) var(--ease-out), border-color var(--dur-2);
+}
+.service-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.service-card__media { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; }
+.service-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
+.service-card:hover .service-card__media img { transform: scale(1.04); }
+.service-card__media::after { content: ""; position: absolute; inset: 0; background: var(--gloss); transform: translateX(-120%); transition: transform var(--dur-sweep) var(--ease-film); pointer-events: none; }
+.service-card:hover .service-card__media::after { transform: translateX(120%); }
+.service-card__body { display: grid; gap: var(--s-2); padding: var(--s-5); flex: 1; align-content: start; }
+.service-card p { color: var(--text-muted); font-size: var(--fs-sm); }
+.service-card__spec { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--glass); }
+.service-card__more { margin-top: auto; padding-top: var(--s-3); }
+.service-card__more::after { content: "\2192"; color: var(--accent-text); margin-left: var(--s-2); }
+
+/* =========================================================
+   5. BANDEAU CHIFFRES  (.stats, .stat)
+   Fond --graphite + .hex-bg. Chaque .stat : .stat__num (mono, valeur finale
+   dans le HTML ; data-count="310" optionnel => compteur JS une seule fois),
+   .stat__label. N'afficher que des valeurs reelles.
+   ========================================================= */
+.stats { background-color: var(--surface); border-block: 1px solid var(--line-soft); padding-block: var(--s-8); }
+.stats__list { display: grid; gap: var(--s-6); list-style: none; padding: 0; }
+.stat { display: grid; gap: var(--s-1); padding-left: var(--s-4); border-left: 2px solid var(--mlk-red); }
+.stat__num { font-family: var(--font-mono); font-weight: 500; font-size: clamp(2.5rem, 1.8rem + 3.5vw, 4.5rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.stat__label { color: var(--text-muted); }
+@media (min-width: 48em) { .stats__list { grid-template-columns: repeat(3, 1fr); } }
+
+/* =========================================================
+   6. POURQUOI NOUS  (.why)
+   Photo (.why__media film-edge) + liste d'arguments (.why__list > li avec h3 + p).
+   ========================================================= */
+.why { display: grid; gap: var(--s-7); align-items: center; }
+.why__media { aspect-ratio: 4 / 3; overflow: hidden; }
+.why__media img { width: 100%; height: 100%; object-fit: cover; }
+.why__list { list-style: none; padding: 0; display: grid; gap: var(--s-5); }
+.why__item { display: grid; grid-template-columns: auto 1fr; column-gap: var(--s-4); }
+.why__item::before { content: ""; grid-row: 1 / span 2; width: 2px; background: linear-gradient(var(--mlk-red), transparent); }
+.why__item h3 { font-size: var(--fs-lg); }
+.why__item p { color: var(--text-muted); margin-top: var(--s-1); }
+@media (min-width: 64em) { .why { grid-template-columns: 5fr 6fr; gap: var(--s-9); } }
+
+/* =========================================================
+   7. GALERIE REALISATIONS  (.gallery, .gallery__item)
+   Grille de <figure> : img + <figcaption class="spec">. Modificateurs :
+   .gallery__item--tall (portrait, 2 rangees), .gallery__item--wide.
+   Legende : "Modele · finition" en mono. Plaques lisibles interdites.
+   ========================================================= */
+.gallery { display: grid; gap: var(--s-3); grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; }
+.gallery__item { position: relative; overflow: hidden; border-radius: var(--r-md); background: var(--surface); aspect-ratio: 1; }
+.gallery__item--tall { grid-row: span 2; aspect-ratio: auto; }
+.gallery__item--wide { grid-column: span 2; aspect-ratio: 16 / 9; }
+.gallery__item img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
+.gallery__item:hover img { transform: scale(1.04); }
+.gallery__item figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: var(--s-6) var(--s-3) var(--s-3);
+  background: linear-gradient(to top, rgb(11 13 16 / .9), transparent); font-size: var(--fs-xs); font-family: var(--font-mono); letter-spacing: .02em;
+}
+@media (min-width: 48em) { .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); } }
+@media (min-width: 64em) { .gallery { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* =========================================================
+   8. PROCESS  (.steps)
+   Liste ordonnee numerotee : <ol class="steps"><li class="step"> .step__num + h3 + p
+   ========================================================= */
+.steps { list-style: none; padding: 0; display: grid; gap: var(--s-5); counter-reset: step; }
+.step { position: relative; padding-top: var(--s-4); border-top: 1px solid var(--line); counter-increment: step; }
+.step::before { content: "0" counter(step); font-family: var(--font-mono); color: var(--accent-text); font-size: var(--fs-sm); }
+.step h3 { font-size: var(--fs-lg); margin-top: var(--s-2); }
+.step p { color: var(--text-muted); margin-top: var(--s-2); font-size: var(--fs-sm); }
+@media (min-width: 48em) { .steps { grid-template-columns: repeat(4, 1fr); gap: var(--s-6); } }
+
+/* =========================================================
+   9. MARQUES / ASSURANCE / PAIEMENT  (.brands, .brand-chip, .trust)
+   .brands : rangee de pastilles claires .brand-chip (logos gris pour fond clair)
+   defilant manuellement (pas de marquee). .brands__legal = mention d'origine
+   OBLIGATOIRE. .trust : 2 cartes (assureur, paiement).
+   ========================================================= */
+.brands { display: flex; gap: var(--s-3); overflow-x: auto; padding-bottom: var(--s-3); scroll-snap-type: x proximity; list-style: none; }
+.brand-chip { flex: none; scroll-snap-align: start; display: grid; place-items: center; width: 9rem; height: 4.5rem; background: #fff; border-radius: var(--r-sm); padding: var(--s-2) var(--s-3); }
+.brand-chip img { max-height: 100%; width: auto; object-fit: contain; }
+@media (min-width: 64em) { .brands { flex-wrap: wrap; overflow: visible; } }
+.brands__legal { margin-top: var(--s-4); font-size: var(--fs-xs); color: var(--text-muted); }
+.trust { display: grid; gap: var(--s-4); margin-top: var(--s-7); }
+.trust__card { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5); background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+.trust__card img { background: #fff; border-radius: var(--r-sm); padding: var(--s-2); width: 10rem; height: auto; }
+.trust__card p { color: var(--text-muted); }
+@media (min-width: 48em) { .trust { grid-template-columns: 1fr 1fr; } }
+
+/* =========================================================
+   10. AVIS  (.reviews, .review)
+   <figure class="review"> : <blockquote> + <figcaption>. Guillemet rouge decoratif.
+   Textes REELS uniquement, mot pour mot.
+   ========================================================= */
+.reviews { display: grid; gap: var(--s-4); }
+.review { position: relative; display: grid; gap: var(--s-4); align-content: space-between; padding: var(--s-6) var(--s-5) var(--s-5); background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+.review::before { content: "\201C"; position: absolute; top: .25rem; left: var(--s-4); font-family: var(--font-display); font-size: 4rem; line-height: 1; color: var(--accent-text); }
+.review blockquote { margin: var(--s-4) 0 0; }
+.review figcaption { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-muted); }
+@media (min-width: 64em) { .reviews { grid-template-columns: repeat(3, 1fr); } }
+
+/* =========================================================
+   11. FAQ  (.faq, .faq__item)  - <details>/<summary>
+   Chevron qui pivote. Ouverture animee en hauteur : le JS enveloppe
+   le contenu (.faq__body > .faq__inner) ; sans JS, ouverture native.
+   ========================================================= */
+.faq { display: grid; gap: var(--s-3); }
+.faq__item { background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+.faq__item[open] { border-color: var(--line); }
+.faq__item summary { display: flex; justify-content: space-between; align-items: center; gap: var(--s-4); padding: var(--s-4) var(--s-5); cursor: pointer; list-style: none; font-family: var(--font-display); font-stretch: 108%; font-weight: 650; font-size: var(--fs-lg); }
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary::after { content: ""; flex: none; width: .6rem; height: .6rem; border-right: 2px solid var(--accent-text); border-bottom: 2px solid var(--accent-text); transform: rotate(45deg); transition: transform var(--dur-2) var(--ease-out); margin-bottom: .25rem; }
+.faq__item[open] summary::after { transform: rotate(-135deg); margin-bottom: -.25rem; }
+.faq__body { display: grid; grid-template-rows: 1fr; }
+.js .faq__body { grid-template-rows: 0fr; transition: grid-template-rows var(--dur-2) var(--ease-out); }
+.js .faq__item.is-open .faq__body { grid-template-rows: 1fr; }
+.faq__inner { overflow: hidden; }
+.faq__inner > p { padding: 0 var(--s-5) var(--s-5); color: var(--text-muted); }
+
+/* =========================================================
+   12. CTA DEVIS  (.cta)
+   Bande --surface + .hex-bg, arete diagonale rouge a gauche (::before),
+   h2 + texte + .cluster (bouton primaire + lien tel:).
+   ========================================================= */
+.cta { position: relative; overflow: hidden; background-color: var(--surface); padding-block: var(--s-9); }
+.cta::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: .75rem; background: var(--mlk-red); clip-path: polygon(0 0, 100% 0, 40% 100%, 0 100%); }
+.cta__inner { display: grid; gap: var(--s-5); justify-items: start; }
+.cta__inner h2 { max-width: 20ch; }
+.cta__tel { font-family: var(--font-mono); font-size: var(--fs-lg); text-decoration: none; }
+.cta__tel:hover { text-decoration: underline; }
+
+/* =========================================================
+   13. CONTACT / HORAIRES  (.contact-grid, .info-card)
+   Cartes d'info (adresse, horaires, telephone) et lien itineraire.
+   ========================================================= */
+.contact-grid { display: grid; gap: var(--s-4); }
+.info-card { padding: var(--s-5); background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); display: grid; gap: var(--s-2); align-content: start; }
+.info-card h3 { font-size: var(--fs-lg); }
+.info-card address { font-style: normal; }
+.info-card dl { display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-4); }
+.info-card dt { color: var(--text-muted); }
+@media (min-width: 48em) { .contact-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* =========================================================
+   14. FOOTER  (.site-footer)
+   4 colonnes (marque, services, atelier, reseaux) + ligne legale.
+   Trait .film-rule au-dessus des titres de colonne (.site-footer__title).
+   ========================================================= */
+.site-footer { background: var(--surface); border-top: 1px solid var(--line-soft); padding-top: var(--s-8); }
+.site-footer__grid { display: grid; gap: var(--s-7); }
+.site-footer__title { display: block; font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--text-muted); margin: var(--s-3) 0 var(--s-4); }
+.site-footer a { text-decoration: none; }
+.site-footer a:hover { text-decoration: underline; }
+.site-footer ul { list-style: none; padding: 0; display: grid; gap: var(--s-2); }
+.site-footer address { font-style: normal; }
+.site-footer__brand img { height: 2.5rem; width: auto; margin-bottom: var(--s-4); }
+.site-footer__brand p { color: var(--text-muted); max-width: 30ch; }
+.site-footer__legal { margin-top: var(--s-8); padding-block: var(--s-5); border-top: 1px solid var(--line-soft); display: grid; gap: var(--s-2); font-size: var(--fs-xs); color: var(--text-muted); }
+@media (min-width: 48em) { .site-footer__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64em) { .site-footer__grid { grid-template-columns: 1.3fr 1fr 1.3fr 1fr; } .site-footer__legal { grid-template-columns: 1fr auto; } }
+@media (max-width: 47.999em) { .site-footer { padding-bottom: 4.5rem; } }
+
+/* =========================================================
+   15. FAB APPEL MOBILE  (.fab-call)
+   Pastille ronde 56px rouge, bas droite, < 48em, visible apres 200px de scroll
+   (.is-visible via JS), masquee quand le menu est ouvert, safe-area iOS.
+   ========================================================= */
+.fab-call {
+  position: fixed; z-index: var(--z-fab); right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom));
+  display: none; place-items: center; width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent); box-shadow: var(--sh-red), var(--sh-2);
+  opacity: 0; transform: translateY(12px); pointer-events: none;
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+.fab-call svg { width: 1.5rem; height: 1.5rem; }
+.fab-call.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+.menu-open .fab-call { opacity: 0; pointer-events: none; }
+@media (max-width: 47.999em) { .fab-call { display: grid; } }
+
+/* =========================================================
+   16. REVEAL & utilitaires du socle
+   Reveal : classe .reveal (base.css) + style="--i:n" pour decaler.
+   .page-top : compense le header fixe sur les pages sans hero.
+   ========================================================= */
+.page-top { padding-top: calc(var(--header-h) + var(--s-8)); }
+.prose > * + * { margin-top: var(--s-4); }
+.prose ul { padding-left: 1.2em; }
+.prose li + li { margin-top: var(--s-2); }
+.hero .eyebrow { color: var(--bone); }
+
+/* =========================================================
+   pages-B : total covering, contact, prendre RDV, mentions legales
+   - .gallery__btn : bouton plein cadre dans .gallery__item (ouvre la lightbox, assets/js/gallery.js)
+   - .lightbox : <dialog> cree par gallery.js (fermer, precedent/suivant, Echap, fleches, focus piege)
+   - .form / .field : formulaire de contact (validation cote client, aria-invalid + .field__error)
+   - .embed : encart Calendly ; .legal : mentions legales ; .todo : champ "a completer" visible
+   ========================================================= */
+.gallery__btn { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: inherit; }
+.gallery__btn:focus-visible { outline-offset: -3px; }
+.gallery__item figcaption { pointer-events: none; }
+.lightbox { padding: 0; border: 0; background: transparent; color: var(--bone); width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; }
+.lightbox::backdrop { background: rgb(11 13 16 / .94); }
+.lightbox__stage { position: relative; display: grid; grid-template-rows: 1fr auto; width: 100%; height: 100%; padding: var(--s-4); gap: var(--s-3); }
+.lightbox__fig { margin: 0; min-height: 0; display: grid; grid-template-rows: 1fr auto; gap: var(--s-3); justify-items: center; }
+.lightbox__fig img { max-width: 100%; max-height: 100%; width: auto; height: auto; min-height: 0; object-fit: contain; border-radius: var(--r-sm); align-self: center; }
+.lightbox__cap { text-align: center; font-family: var(--font-mono); font-size: var(--fs-sm); }
+.lightbox__count { display: block; color: var(--text-muted); font-size: var(--fs-xs); margin-top: var(--s-1); }
+.lightbox__bar { display: flex; justify-content: center; gap: var(--s-3); }
+.lightbox__btn { display: inline-grid; place-items: center; min-width: 3rem; height: 3rem; padding: 0 var(--s-4); background: var(--surface-2); color: var(--bone); border: 1px solid var(--line); border-radius: var(--r-pill); cursor: pointer; font-family: var(--font-display); font-weight: 650; font-size: var(--fs-sm); }
+.lightbox__btn:hover { border-color: var(--accent); }
+.lightbox__close { position: absolute; top: var(--s-3); right: var(--s-3); z-index: 1; }
+@media (min-width: 48em) {
+  .lightbox__stage { grid-template-columns: auto 1fr auto; grid-template-rows: 1fr; align-items: center; padding: var(--s-6); }
+  .lightbox__bar { display: contents; }
+  .lightbox__prev { grid-column: 1; grid-row: 1; }
+  .lightbox__next { grid-column: 3; grid-row: 1; }
+  .lightbox__fig { grid-column: 2; grid-row: 1; height: 100%; }
+}
+.process-note { margin-top: var(--s-5); color: var(--text-muted); font-size: var(--fs-sm); max-width: 60ch; }
+@media (min-width: 48em) { .steps--5 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64em) { .steps--5 { grid-template-columns: repeat(5, 1fr); } }
+
+.form-wrap { display: grid; gap: var(--s-7); }
+@media (min-width: 64em) { .form-wrap { grid-template-columns: 7fr 5fr; align-items: start; gap: var(--s-8); } }
+.form { display: grid; gap: var(--s-4); padding: var(--s-5); background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+.form__row { display: grid; gap: var(--s-4); }
+@media (min-width: 48em) { .form__row--2 { grid-template-columns: 1fr 1fr; } }
+.field { display: grid; gap: var(--s-2); align-content: start; }
+.field label, .field legend { font-weight: 600; font-size: var(--fs-sm); }
+.field .req { color: var(--accent-text); }
+.field input, .field select, .field textarea { width: 100%; min-height: 3rem; padding: .7rem .9rem; background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.field textarea { min-height: 8rem; resize: vertical; }
+.field input:hover, .field select:hover, .field textarea:hover { border-color: var(--glass); }
+.field [aria-invalid="true"] { border-color: var(--accent-text); }
+.field__hint { font-size: var(--fs-xs); color: var(--text-muted); }
+.field__error { color: var(--accent-text); font-size: var(--fs-sm); }
+.field__error[hidden] { display: none; }
+.form__note { font-size: var(--fs-xs); color: var(--text-muted); }
+.form__summary { padding: var(--s-4); border: 1px solid var(--accent-text); border-radius: var(--r-sm); color: var(--bone); }
+.form__summary[hidden], .form__success[hidden] { display: none; }
+.form__summary ul { padding-left: 1.2em; margin-top: var(--s-2); }
+.form__summary a { color: var(--accent-text); }
+.form__success { padding: var(--s-5); border: 1px solid var(--glass); border-radius: var(--r-md); background: var(--surface-2); display: grid; gap: var(--s-2); }
+.todo { display: inline; padding: .05em .4em; background: rgb(255 77 88 / .14); border: 1px dashed var(--accent-text); border-radius: var(--r-xs); color: var(--bone); font-family: var(--font-mono); font-size: .9em; }
+.side-stack { display: grid; gap: var(--s-4); }
+.contact-grid--2 { grid-template-columns: 1fr; }
+@media (min-width: 48em) { .contact-grid--2 { grid-template-columns: 1fr 1fr; } }
+
+.embed { display: grid; gap: var(--s-4); }
+.embed__frame { width: 100%; min-height: 40rem; border: 1px solid var(--line-soft); border-radius: var(--r-md); background: var(--surface); }
+.legal { display: grid; gap: var(--s-7); }
+.legal h2 { font-size: var(--fs-xl); margin-bottom: var(--s-3); }
+.legal dl { display: grid; grid-template-columns: 1fr; gap: var(--s-1) var(--s-4); }
+.legal dt { color: var(--text-muted); font-size: var(--fs-sm); margin-top: var(--s-2); }
+.legal dd { margin: 0; overflow-wrap: anywhere; }
+@media (min-width: 48em) { .legal dl { grid-template-columns: 14rem 1fr; } .legal dt { margin-top: 0; } }
+.hero .btn--ghost { --_bg: rgb(11 13 16 / .45); --_fg: var(--bone); --_bd: rgb(242 240 235 / .5); }
+
+/* =========================================================
+   pages-A : pages services (film solaire, simulateur, PPF, pare-brise)
+   .figures : rangee de donnees mono (garantie, duree, ESR...) ; .gamme : carte de gamme ;
+   .sim : simulateur de teintes (voiture SVG + choix + 3 indicateurs) ; .legal-note : mention.
+   ========================================================= */
+.figures { display: grid; gap: var(--s-3); grid-template-columns: repeat(2, minmax(0, 1fr)); list-style: none; padding: 0; }
+.figures li { display: grid; gap: var(--s-1); padding: var(--s-4); background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+.figures b { font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-xl); line-height: 1.1; }
+.figures span { color: var(--text-muted); font-size: var(--fs-sm); }
+@media (min-width: 48em) { .figures { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.gamme { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5); background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+.gamme__num { font-family: var(--font-mono); font-size: var(--fs-2xl); line-height: 1; color: var(--glass); }
+.gamme p { color: var(--text-muted); }
+.pages-a-split { display: grid; gap: var(--s-6); }
+@media (min-width: 48em) { .pages-a-split { grid-template-columns: 1fr 1fr; } }
+.legal-note { margin-top: var(--s-5); font-size: var(--fs-sm); color: var(--text-muted); border-left: 2px solid var(--glass); padding-left: var(--s-4); max-width: 60ch; }
+.sim { display: grid; gap: var(--s-6); }
+@media (min-width: 64em) { .sim { grid-template-columns: 1.15fr 1fr; align-items: start; } }
+.sim__stage { background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--r-md); padding: var(--s-4); }
+.sim__car { display: block; width: 100%; height: auto; }
+.sim__car .glass { fill: #9db4c4; }
+.sim__car .film { fill: #000; opacity: 0; transition: opacity var(--dur-3) var(--ease-out); }
+.sim__panel { display: grid; gap: var(--s-5); }
+.sim__group { border: 0; padding: 0; margin: 0; display: grid; gap: var(--s-3); }
+.sim__group legend { padding: 0; font-family: var(--font-display); font-stretch: 108%; font-weight: 700; font-size: var(--fs-lg); margin-bottom: var(--s-2); }
+.sim__opts { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.sim__opt { position: relative; }
+.sim__opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.sim__opt span { display: grid; place-items: center; min-width: 3.5rem; min-height: 2.75rem; padding: 0 var(--s-3); border: 1px solid var(--line); border-radius: var(--r-pill); font-family: var(--font-mono); font-size: var(--fs-sm); background: var(--surface); transition: background var(--dur-1), border-color var(--dur-1); }
+.sim__opt input:checked + span { background: var(--bone); color: var(--ink); border-color: var(--bone); }
+.sim__opt input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 3px; }
+.sim__read { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); margin: 0; }
+.sim__read div { padding: var(--s-3); background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.sim__read dt { font-size: var(--fs-xs); color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: var(--ls-label); }
+.sim__read dd { margin: var(--s-1) 0 0; font-family: var(--font-mono); font-size: var(--fs-xl); line-height: 1.1; }
+@media (prefers-reduced-motion: reduce) { .sim__car .film { transition: none; } }
+
+/* QA : la galerie d'accueil (8 vignettes, 2 hautes) laissait 2 cases vides en derniere rangee a 4 colonnes */
+@media (min-width: 64em) {
+  #realisations .gallery__item:nth-last-child(-n+2) { grid-column: span 2; aspect-ratio: 2 / 1; }
+}
+
+/* Hero sans photo (simulateur) : la voiture interactive plus bas fait le travail */
+.hero--plain { min-height: clamp(20rem, 42svh, 28rem); background: linear-gradient(135deg, var(--graphite-2), var(--ink) 70%); }
+.hero--plain::after { display: none; }
+
+/* mobile-ux */
+/* =========================================================
+   mobile-ux  (agent UX mobile - JS associe : assets/js/mobile.js)
+   Sous 48em : barre d'action collante, menu plein ecran gros liens, hero 100svh,
+   carrousels scroll-snap (services, avis, realisations), stats compactes,
+   simulateur : voiture collante en haut + puces larges, lightbox tactile.
+   Sans hover sur tactile ; etats :active ; cibles >= 44px ; safe-area iOS.
+   ========================================================= */
+:root { --mbar-h: calc(3.75rem + env(safe-area-inset-bottom, 0px)); }
+html { -webkit-tap-highlight-color: transparent; }
+body { overflow-wrap: break-word; }
+a, button, summary, label { touch-action: manipulation; }
+
+/* --- tactile : pas de hover colle, retour d'appui --- */
+@media (hover: none) {
+  .btn:hover { transform: none; box-shadow: none; --_bg: var(--accent); }
+  .btn--ghost:hover { --_bg: transparent; }
+  .btn--light:hover { --_bg: var(--bone); }
+  .btn::after, .service-card__media::after { display: none; }
+  .service-card:hover { transform: none; border-color: var(--line-soft); }
+  .service-card:hover .service-card__media img, .gallery__item:hover img { transform: none; }
+  .card:hover { transform: none; border-color: var(--line-soft); }
+  .link-arrow:hover::after { transform: none; }
+  .nav__link:hover { background: transparent; }
+}
+.btn:active { transform: scale(.97); --_bg: var(--accent-hover); }
+.btn--ghost:active { --_bg: var(--line-soft); }
+.service-card:active { transform: scale(.985); border-color: var(--accent); }
+.faq__item summary:active { background: var(--line-soft); }
+.nav__link:active { background: var(--line-soft); }
+.info-card a, .form__success a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+.field input, .field select, .field textarea { font-size: max(1rem, 16px); }
+
+/* --- barre d'action collante --- */
+.m-bar { display: none; }
+@media (max-width: 47.999em) {
+  .has-mbar .fab-call { display: none !important; }
+  .m-bar {
+    position: fixed; z-index: calc(var(--z-fab) + 10); left: 0; right: 0; bottom: 0;
+    display: flex; gap: .5rem; padding: .5rem max(.75rem, env(safe-area-inset-right)) calc(.5rem + env(safe-area-inset-bottom, 0px)) max(.75rem, env(safe-area-inset-left));
+    background: rgb(11 13 16 / .92); border-top: 1px solid var(--line-soft);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    transform: translateY(110%); visibility: hidden;
+    transition: transform var(--dur-2) var(--ease-out), visibility 0s linear var(--dur-2);
+  }
+  .m-bar.is-visible { transform: none; visibility: visible; transition-delay: 0s; }
+  .m-bar__btn {
+    flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 3rem;
+    border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface-2); color: var(--bone);
+    font-family: var(--font-display); font-stretch: 108%; font-weight: 650; font-size: var(--fs-sm); letter-spacing: .03em; text-transform: uppercase; text-decoration: none;
+  }
+  .m-bar__btn svg { width: 1.15rem; height: 1.15rem; flex: none; }
+  .m-bar__btn--call { flex-grow: 1.35; background: var(--accent); border-color: transparent; color: #fff; }
+  .m-bar__btn:active { transform: scale(.97); filter: brightness(.9); }
+  .has-mbar body { padding-bottom: var(--mbar-h); }
+  .has-mbar .site-footer { padding-bottom: 0; }
+}
+
+/* --- menu plein ecran --- */
+.nav__extra { display: none; }
+@media (max-width: 63.999em) {
+  .js .nav { overflow-y: auto; overscroll-behavior: contain; justify-content: flex-start; gap: var(--s-4); padding-top: calc(var(--header-h) + var(--s-4)); padding-bottom: calc(var(--s-6) + env(safe-area-inset-bottom, 0px)); }
+  .js .nav__list { gap: 0; margin-top: var(--s-3); }
+  .js .nav__list li { border-bottom: 1px solid var(--line-soft); }
+  .js .nav__link { display: flex; align-items: center; justify-content: space-between; min-height: 3.75rem; padding: var(--s-3) 0; border-radius: 0; font-size: clamp(1.4rem, 6vw, 1.75rem); }
+  .js .nav__link::after { content: "\2192"; color: var(--accent-text); font-size: 1.1em; }
+  .js .nav__cta { align-self: stretch; min-height: 3.5rem; font-size: var(--fs-base); }
+  .nav__extra { display: grid; gap: var(--s-4); }
+  .nav__call { min-height: 3.5rem; font-size: var(--fs-base); }
+  .nav__meta { color: var(--text-muted); font-size: var(--fs-sm); line-height: 1.7; }
+  .nav__meta a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--bone); }
+  .menu-open .m-bar { visibility: hidden; transform: translateY(110%); }
+}
+
+/* --- page : rythme, titres, hero --- */
+@media (max-width: 47.999em) {
+  :root { --section-y: 3.25rem; }
+  h2 { font-size: clamp(1.75rem, 7.4vw, 2.25rem); }
+  .section-head { margin-bottom: var(--s-5); }
+  .lead { font-size: 1.0625rem; }
+  .hero { min-height: max(32rem, 100svh); }
+  .hero--page { min-height: clamp(24rem, 62svh, 34rem); }
+  .hero--plain { min-height: 0; }
+  .hero h1 { font-size: clamp(2.375rem, 1.6rem + 6vw, 3.25rem); }
+  .hero__inner { padding-block: calc(var(--header-h) + var(--s-6)) var(--s-6); gap: var(--s-4); }
+  .hero .cluster { display: grid; grid-template-columns: 1fr; gap: var(--s-3); }
+  .hero .cluster .btn { width: 100%; min-height: 3.25rem; }
+  .cta .cluster { display: grid; width: 100%; gap: var(--s-3); justify-items: stretch; }
+  .cta .cluster .btn { width: 100%; min-height: 3.25rem; }
+  .cta .cta__tel { display: inline-flex; justify-content: center; align-items: center; min-height: 3.25rem; border: 1px solid var(--line); border-radius: var(--r-pill); }
+  .cluster .btn { min-height: 3rem; }
+  .stats { padding-block: var(--s-6); }
+  .stats__list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
+  .stat { padding-left: var(--s-3); }
+  .stat__num { font-size: clamp(1.5rem, 7.2vw, 2rem); }
+  .stat__label { font-size: var(--fs-sm); line-height: 1.3; }
+  .steps { gap: var(--s-4); }
+  .why { gap: var(--s-5); }
+  .trust__card, .info-card, .gamme { padding: var(--s-4); }
+  .faq__item summary { min-height: 3.5rem; padding: var(--s-3) var(--s-4); font-size: var(--fs-base); }
+  .faq__inner > p { padding: 0 var(--s-4) var(--s-4); }
+  .site-footer { padding-top: var(--s-6); }
+  .site-footer__grid { gap: var(--s-5); }
+  .site-footer a:not(.link-arrow) { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .site-footer ul { gap: 0; }
+  .site-footer__legal a { min-height: 2.75rem; }
+}
+
+/* --- carrousels scroll-snap (services, avis, realisations) --- */
+@media (max-width: 47.999em) {
+  .m-snap, .auto-grid:has(> .service-card), #services .auto-grid, .reviews, #realisations .gallery {
+    display: flex; grid-template-columns: none; gap: var(--s-3);
+    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter);
+    padding-bottom: var(--s-2); scrollbar-width: none;
+  }
+  .m-snap::-webkit-scrollbar, .auto-grid:has(> .service-card)::-webkit-scrollbar, .reviews::-webkit-scrollbar, #realisations .gallery::-webkit-scrollbar { display: none; }
+  .auto-grid:has(> .service-card) > .service-card, #services .auto-grid > .service-card { flex: 0 0 min(82%, 20rem); scroll-snap-align: start; }
+  .auto-grid:has(> .service-card) .service-card__media, #services .service-card__media { aspect-ratio: 16 / 10; }
+  .service-card__body { padding: var(--s-4); }
+  .service-card__more { padding-top: var(--s-2); min-height: 2.75rem; }
+  .reviews > .review { flex: 0 0 min(86%, 21rem); scroll-snap-align: start; }
+  #realisations .gallery__item, #realisations .gallery__item--tall { flex: 0 0 min(72%, 17rem); aspect-ratio: 4 / 5; grid-row: auto; scroll-snap-align: start; }
+  /* le reveal ne doit pas cacher les cartes hors ecran du carrousel */
+  .m-snap > .reveal, .m-snap > .reveal.is-in { opacity: 1; transform: none; }
+  .m-dots { display: flex; justify-content: center; gap: .5rem; margin-top: var(--s-3); }
+  .m-dots span { width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); transition: background var(--dur-1), width var(--dur-2) var(--ease-out); }
+  .m-dots span.is-on { width: 1.4rem; border-radius: var(--r-pill); background: var(--accent-text); }
+}
+@media (min-width: 48em) { .m-dots { display: none; } }
+
+/* --- galerie covering (page total-covering) : cibles tactiles, lightbox tactile --- */
+.lightbox__fig img { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; will-change: transform; }
+.lightbox__stage { padding-bottom: calc(var(--s-4) + env(safe-area-inset-bottom, 0px)); }
+.lightbox__btn { min-height: 3rem; min-width: 3.5rem; }
+.lightbox__close { top: max(var(--s-3), env(safe-area-inset-top, 0px)); right: max(var(--s-3), env(safe-area-inset-right, 0px)); }
+@media (max-width: 47.999em) {
+  .gallery__item figcaption { padding: var(--s-5) var(--s-2) var(--s-2); }
+  .lightbox::backdrop { background: rgb(11 13 16 / .985); }
+  .lightbox__bar { gap: var(--s-4); }
+  .lightbox__btn { flex: 1 1 0; max-width: 9rem; }
+}
+
+/* --- formulaires + rendez-vous --- */
+@media (max-width: 47.999em) {
+  .form { padding: var(--s-4); }
+  .form button[type="submit"] { width: 100%; min-height: 3.25rem; }
+  .field input, .field select { min-height: 3.25rem; }
+  .field label, .field legend { font-size: var(--fs-base); }
+  .field__error { font-size: var(--fs-sm); font-weight: 600; }
+  .embed .cluster { display: grid; gap: var(--s-3); }
+  .embed .cluster .btn { width: 100%; }
+  .embed__frame { min-height: 0; height: 44rem; }
+  .side-stack .btn { width: 100%; }
+}
+
+/* --- simulateur : voiture collante, puces larges, resultat sans scroller --- */
+@media (max-width: 47.999em) {
+  .sim { gap: var(--s-4); }
+  .sim__stage { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 4.75rem); z-index: 5; padding: var(--s-2) var(--s-3); box-shadow: 0 10px 24px rgb(0 0 0 / .45); }
+  .sim__car { max-height: 7.5rem; margin-inline: auto; }
+  .sim__opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-2); }
+  .sim__opt:first-child { grid-column: span 2; }
+  .sim__opt span { min-width: 0; min-height: 3rem; width: 100%; padding: 0 var(--s-2); font-size: var(--fs-base); }
+  .sim__read { gap: var(--s-2); }
+  .sim__read dd { font-size: var(--fs-lg); }
+  .sim__read div { padding: var(--s-2) var(--s-3); }
+  .sim__panel { gap: var(--s-4); }
+}
+
+/* --- cibles tactiles 44px : logo, liens fleches, coordonnees des mentions legales --- */
+@media (max-width: 47.999em) {
+  .brand { min-height: 2.75rem; }
+  .link-arrow { min-height: 2.75rem; }
+  .legal dd a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .hero h1, .section-head h1 { hyphens: manual; }
+}
+
+@media (max-height: 520px) and (orientation: landscape) { .hero { min-height: 28rem; } .m-bar { padding-block: .25rem; } }
+
+/* splash */
+/* Ecran d'ouverture (accueil, 1x par session). Absent sans JS : visible seulement si html.splash-on (ajoute par le script inline du head).
+   Sequence ~1,6 s : logo (0-.4) > reflet (.3-.95) > trait rouge (.7-1.05) > volet diagonal (1.15-1.6). Transform/opacity uniquement.
+   Garde-fou CSS : l'overlay est retire a 3 s meme si splash.js echoue. */
+.splash { display: none; }
+html.splash-on { overflow: hidden; }
+html.splash-on .splash {
+  display: block; position: fixed; inset: 0; z-index: 200; overflow: hidden;
+  pointer-events: auto; cursor: pointer;
+  animation: splash-failsafe 0s linear 3s forwards;
+}
+html.splash-on .splash.is-done { pointer-events: none; }
+.splash__panel {
+  position: absolute; inset: 0 0 -14vh 0; display: grid; place-items: center; align-content: center; gap: var(--s-4);
+  background: radial-gradient(120% 90% at 50% 40%, #151a21 0, var(--ink) 70%);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14vh), 0 100%);
+  animation: splash-exit .45s var(--ease-film) 1.15s forwards;
+  will-change: transform;
+}
+.splash.is-skip .splash__panel { animation-delay: 0s; animation-duration: .28s; }
+.splash__logo { position: relative; width: min(62vw, 18rem); aspect-ratio: 767 / 262; animation: splash-in .45s var(--ease-out) both; }
+.splash__logo img { display: block; width: 100%; height: 100%; }
+.splash__gloss {
+  position: absolute; inset: 0;
+  -webkit-mask: url("/assets/logo/mlk-auto-logo-bone.png") center / 100% 100% no-repeat; mask: url("/assets/logo/mlk-auto-logo-bone.png") center / 100% 100% no-repeat;
+  background: linear-gradient(115deg, transparent 40%, rgb(255 255 255 / .95) 50%, transparent 60%) no-repeat;
+  background-size: 260% 100%; background-position: 130% 0;
+  animation: splash-gloss .65s var(--ease-film) .3s both;
+}
+.splash__rule { width: min(62vw, 18rem); height: 2px; background: var(--mlk-red); transform: scaleX(0); transform-origin: left; animation: splash-rule .4s var(--ease-out) .7s forwards; }
+.splash__tag { margin: 0; font: 500 var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--mist); opacity: 0; animation: splash-fade .4s ease-out .8s forwards; }
+@keyframes splash-in { from { opacity: 0; transform: translateY(6px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes splash-gloss { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+@keyframes splash-rule { to { transform: scaleX(1); } }
+@keyframes splash-fade { to { opacity: 1; } }
+@keyframes splash-exit { to { transform: translate3d(0, -118%, 0); } }
+@keyframes splash-failsafe { to { visibility: hidden; pointer-events: none; } }
+@media (prefers-reduced-motion: reduce) { html.splash-on .splash { display: none; } html.splash-on { overflow: auto; } }

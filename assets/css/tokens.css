@@ -1,0 +1,127 @@
+/* MLK Auto - design tokens. Concept "La couche invisible". Voir DA.md.
+   Sombre natif. Clair optionnel : <html data-theme="light"> */
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Hanken+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  color-scheme: dark;
+
+  /* Marque */
+  --mlk-red: #d51a27;           /* racine historique, fonds de boutons */
+  --mlk-red-deep: #b8121f;      /* hover / pressed */
+  --mlk-red-glow: #ff4d58;      /* rouge lisible en TEXTE sur fond sombre */
+  --mlk-red-wash: rgb(213 26 39 / 0.14);
+
+  /* Neutres "vernis" (noir teinte bleu acier) */
+  --ink: #0b0d10;
+  --graphite: #14181d;
+  --graphite-2: #1b2027;
+  --line: #2a313a;
+  --line-soft: rgb(242 240 235 / 0.1);
+  --bone: #f2f0eb;
+  --mist: #a4acb5;
+  --glass: #8fa3b3;             /* teinte film/vitre, accent froid secondaire */
+
+  /* Sémantique (sombre) */
+  --bg: var(--ink);
+  --surface: var(--graphite);
+  --surface-2: var(--graphite-2);
+  --text: var(--bone);
+  --text-muted: var(--mist);
+  --accent: var(--mlk-red);
+  --accent-hover: var(--mlk-red-deep);
+  --accent-text: var(--mlk-red-glow);
+  --on-accent: #ffffff;
+  --border: var(--line);
+  --focus: #7cc4ff;
+  --overlay: rgb(11 13 16 / 0.72);
+  --veil-photo: linear-gradient(to top, rgb(11 13 16 / .92) 0, rgb(11 13 16 / .6) 45%, rgb(11 13 16 / .35));
+
+  /* Effet film : reflets */
+  --gloss: linear-gradient(115deg, transparent 38%, rgb(255 255 255 / 0.22) 50%, transparent 62%);
+  --satin: linear-gradient(115deg, transparent 20%, rgb(255 255 255 / 0.07) 50%, transparent 80%);
+  --tint-smoke: rgb(11 13 16 / 0.55);
+
+  /* Typographie */
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --fs-xs: clamp(0.75rem, 0.74rem + 0.05vw, 0.8rem);
+  --fs-sm: 0.875rem;
+  --fs-base: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --fs-lg: clamp(1.125rem, 1.07rem + 0.3vw, 1.3125rem);
+  --fs-xl: clamp(1.375rem, 1.2rem + 0.9vw, 1.875rem);
+  --fs-2xl: clamp(1.75rem, 1.4rem + 1.8vw, 2.75rem);
+  --fs-3xl: clamp(2.25rem, 1.6rem + 3.2vw, 4.25rem);
+  --fs-hero: clamp(2.75rem, 1.7rem + 5.4vw, 6.5rem);
+
+  --lh-tight: 1.04;
+  --lh-snug: 1.2;
+  --lh-body: 1.6;
+  --ls-display: -0.015em;
+  --ls-label: 0.14em;
+
+  /* Espacements (base 4) */
+  --s-1: 0.25rem;  --s-2: 0.5rem;   --s-3: 0.75rem;  --s-4: 1rem;
+  --s-5: 1.5rem;   --s-6: 2rem;     --s-7: 3rem;     --s-8: 4rem;
+  --s-9: 6rem;     --s-10: 8rem;
+  --section-y: clamp(4rem, 3rem + 6vw, 8rem);
+  --gutter: clamp(1.25rem, 0.6rem + 3vw, 2.5rem);
+
+  /* Rayons : angles nets, façon découpe de film */
+  --r-xs: 2px;
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-pill: 999px;
+
+  /* Ombres (sombre : plus de bord lumineux que d'ombre) */
+  --sh-1: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 6px 16px rgb(0 0 0 / 0.35);
+  --sh-2: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 16px 40px rgb(0 0 0 / 0.5);
+  --sh-red: 0 10px 30px rgb(213 26 39 / 0.35);
+
+  /* Grille / conteneurs */
+  --container: 76rem;
+  --container-narrow: 48rem;
+  --cols: 4;
+  --grid-gap: var(--s-4);
+
+  /* Mouvement */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-film: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 150ms;
+  --dur-2: 280ms;
+  --dur-3: 600ms;
+  --dur-sweep: 1400ms;
+
+  /* Z-index */
+  --z-header: 50;
+  --z-fab: 60;
+  --z-modal: 100;
+
+  --header-h: 4.5rem;
+}
+
+@media (min-width: 48em) { :root { --cols: 8; --grid-gap: var(--s-5); } }
+@media (min-width: 64em) { :root { --cols: 12; --grid-gap: var(--s-6); } }
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f2f0eb;
+  --surface: #ffffff;
+  --surface-2: #e8e5de;
+  --text: #12161b;
+  --text-muted: #4a525b;
+  --accent-text: #b8121f;
+  --border: #cfcac0;
+  --line-soft: rgb(18 22 27 / 0.12);
+  --overlay: rgb(242 240 235 / 0.8);
+  --focus: #0b5cad;
+  --sh-1: 0 1px 2px rgb(18 22 27 / 0.08), 0 6px 16px rgb(18 22 27 / 0.08);
+  --sh-2: 0 18px 40px rgb(18 22 27 / 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-1: 0ms; --dur-2: 0ms; --dur-3: 0ms; --dur-sweep: 0ms; }
+}

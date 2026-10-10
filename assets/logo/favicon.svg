@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>MLK AUTO</title>
+  <path d="M0 0h64v46L46 64H0z" fill="#D51A27"/>
+  <polyline points="14,48 14,17 32,36 50,17 50,48" fill="none" stroke="#fff" stroke-width="7" stroke-miterlimit="3"/>
+</svg>
